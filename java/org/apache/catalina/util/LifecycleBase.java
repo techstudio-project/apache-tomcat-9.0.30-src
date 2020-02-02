@@ -125,6 +125,10 @@ public abstract class LifecycleBase implements Lifecycle {
     }
 
 
+    /**
+     * server service connector engine等这些组件都会调用这个方法，然后在调用自己内部实现initInternal
+     * @throws LifecycleException
+     */
     @Override
     public final synchronized void init() throws LifecycleException {
         if (!state.equals(LifecycleState.NEW)) {

@@ -22,6 +22,8 @@ import org.apache.tomcat.jni.Error;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
 
+import java.net.ServerSocket;
+
 public class Acceptor<U> implements Runnable {
 
     private static final Log log = LogFactory.getLog(Acceptor.class);
@@ -64,6 +66,7 @@ public class Acceptor<U> implements Runnable {
         while (endpoint.isRunning()) {
 
             // Loop if endpoint is paused
+            // 如果endpoint处于暂停且运行状态时，一直循环
             while (endpoint.isPaused() && endpoint.isRunning()) {
                 state = AcceptorState.PAUSED;
                 try {
@@ -73,6 +76,7 @@ public class Acceptor<U> implements Runnable {
                 }
             }
 
+            // 当endpoint退出时，退出acceptor线程
             if (!endpoint.isRunning()) {
                 break;
             }
@@ -92,6 +96,7 @@ public class Acceptor<U> implements Runnable {
                 try {
                     // Accept the next incoming connection from the server
                     // socket
+                    // 阻塞，等待客户端的socket连接
                     socket = endpoint.serverSocketAccept();
                 } catch (Exception ioe) {
                     // We didn't get a socket
@@ -112,6 +117,7 @@ public class Acceptor<U> implements Runnable {
                 if (endpoint.isRunning() && !endpoint.isPaused()) {
                     // setSocketOptions() will hand the socket off to
                     // an appropriate processor if successful
+                    // acceptor包装了socket，然后传递给poller
                     if (!endpoint.setSocketOptions(socket)) {
                         endpoint.closeSocket(socket);
                     }

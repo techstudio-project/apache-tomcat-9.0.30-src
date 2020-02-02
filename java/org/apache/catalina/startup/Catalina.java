@@ -536,6 +536,7 @@ public class Catalina {
 
     /**
      * Start a new server instance.
+     * 会初始化server=StandardServer
      */
     public void load() {
 
@@ -556,6 +557,7 @@ public class Catalina {
         File file = configFile();
 
         // Create and execute our Digester
+        // Digester的方式解析server.xml并且生成Server，Service，Connector和Container实例的，xml中只配置了Engine和Host两种Container
         Digester digester = createStartDigester();
 
         try (ConfigurationSource.Resource resource = ConfigFileLoader.getSource().getServerXml()) {
@@ -563,6 +565,8 @@ public class Catalina {
             InputSource inputSource = new InputSource(resource.getURI().toURL().toString());
             inputSource.setByteStream(inputStream);
             digester.push(this);
+
+            // server在这里初始化
             digester.parse(inputSource);
         } catch (Exception e) {
             log.warn(sm.getString("catalina.configFail", file.getAbsolutePath()), e);
@@ -580,6 +584,7 @@ public class Catalina {
         initStreams();
 
         // Start the new server
+        // 启动 standardserver
         try {
             getServer().init();
         } catch (LifecycleException e) {

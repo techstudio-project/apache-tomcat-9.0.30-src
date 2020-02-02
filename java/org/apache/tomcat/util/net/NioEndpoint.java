@@ -424,6 +424,8 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
             socketWrapper.setWriteTimeout(getConnectionTimeout());
             socketWrapper.setKeepAliveLeft(NioEndpoint.this.getMaxKeepAliveRequests());
             socketWrapper.setSecure(isSSLEnabled());
+
+            // 将包装好的socket交给poller线程
             poller.register(channel, socketWrapper);
             return true;
         } catch (Throwable t) {
