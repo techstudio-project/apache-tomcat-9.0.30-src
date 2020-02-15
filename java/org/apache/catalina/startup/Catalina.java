@@ -634,6 +634,7 @@ public class Catalina {
         long t1 = System.nanoTime();
 
         // Start the new server
+        // 初始化完之后就会执行start方法
         try {
             getServer().start();
         } catch (LifecycleException e) {
